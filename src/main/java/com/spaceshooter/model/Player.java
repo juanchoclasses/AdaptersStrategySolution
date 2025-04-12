@@ -5,6 +5,7 @@ public class Player {
     private int y;
     private static final int WIDTH = 40;
     private static final int HEIGHT = 40;
+    private static final int GAME_WIDTH = 600;
     
     public Player(int x, int y) {
         this.x = x;
@@ -16,7 +17,7 @@ public class Player {
     }
     
     public void moveRight() {
-        x = Math.min(600 - WIDTH, x + 10);
+        x = Math.min(GAME_WIDTH - WIDTH, x + 10);
     }
     
     public int getX() {

@@ -17,7 +17,10 @@ public class GameModel {
     private MissileStrategy missileStrategy;
     private Random random;
     private int score;
-    private boolean gameOver;
+    private boolean gameOver = false;
+    private boolean debugMode = false;
+    private int leftmostX = 0;
+    private int rightmostX = 0;
     
     // Live missile limits
     public static final int BASIC_MISSILE_LIMIT = 4;
@@ -31,6 +34,13 @@ public class GameModel {
     private int targetingMissilesLive;
     private int laserMissilesLive;
     
+    private boolean movingRight = true;
+    private static final int ENEMY_MOVE_INTERVAL = 30; // Move every 30 updates
+    private int moveCounter = 0;
+    private static final int WIDTH = 600; // Game width
+    private static final int ENEMY_MOVE_DOWN_AMOUNT = 50; // Amount to move down when enemies hit the edge
+    private int enemyDirection = 1; // Direction of enemy movement
+    
     public GameModel() {
         this.player = new Player(300, 500);
         this.enemies = new ArrayList<>();
@@ -38,7 +48,6 @@ public class GameModel {
         this.missileStrategy = new BasicMissileStrategy();
         this.random = new Random();
         this.score = 0;
-        this.gameOver = false;
         
         // Initialize live missile counts
         resetLiveMissileCounts();
@@ -79,6 +88,9 @@ public class GameModel {
         checkCollisions();
         
         // Move enemies
+        updateEnemies();
+        
+        // Enemy shooting
         if (!enemies.isEmpty() && random.nextInt(100) < 2) {
             int index = random.nextInt(enemies.size());
             Enemy enemy = enemies.get(index);
@@ -234,5 +246,62 @@ public class GameModel {
     
     public int getLaserMissilesLive() {
         return laserMissilesLive;
+    }
+    
+    public void toggleDebugMode() {
+        debugMode = !debugMode;
+    }
+
+    public boolean isDebugMode() {
+        return debugMode;
+    }
+
+    public int getLeftmostX() {
+        return leftmostX;
+    }
+
+    public int getRightmostX() {
+        return rightmostX;
+    }
+
+    public int getEnemyDirection() {
+        return enemyDirection;
+    }
+    
+    private void updateEnemies() {
+        moveCounter++;
+        if (moveCounter >= ENEMY_MOVE_INTERVAL) {
+            moveCounter = 0;
+            
+            // Find the leftmost and rightmost enemies
+            leftmostX = Integer.MAX_VALUE;
+            rightmostX = Integer.MIN_VALUE;
+            for (Enemy enemy : enemies) {
+                leftmostX = Math.min(leftmostX, enemy.getX());
+                rightmostX = Math.max(rightmostX, enemy.getX() + enemy.getWidth());
+            }
+            
+            // Check if we need to change direction and move down
+            if (enemyDirection > 0 && rightmostX >= WIDTH) {
+                enemyDirection = -1;
+                for (Enemy enemy : enemies) {
+                    enemy.moveDown();
+                }
+            } else if (enemyDirection < 0 && leftmostX <= 0) {
+                enemyDirection = 1;
+                for (Enemy enemy : enemies) {
+                    enemy.moveDown();
+                }
+            }
+            
+            // Move all enemies horizontally
+            for (Enemy enemy : enemies) {
+                if (enemyDirection > 0) {
+                    enemy.moveRight();
+                } else {
+                    enemy.moveLeft();
+                }
+            }
+        }
     }
 }
