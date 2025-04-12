@@ -116,18 +116,18 @@ public class GameView extends JFrame {
         strategyLabel.setForeground(Color.WHITE);
         panel.add(strategyLabel);
         
-        basicButton = new JButton("Basic");
+        basicButton = new JButton("Basic (X)");
         basicButton.setActionCommand("basic");
         
-        doubleButton = new JButton("Double");
+        doubleButton = new JButton("Double (C)");
         doubleButton.setActionCommand("double");
         
-        targetingButton = new JButton("Targeting");
+        targetingButton = new JButton("Targeting (V)");
         targetingButton.setActionCommand("targeting");
         
-        laserButton = new JButton("Laser");
+        laserButton = new JButton("Laser (B)");
         laserButton.setActionCommand("laser");
-
+        
         restartButton = new JButton("Restart");
         restartButton.setActionCommand("restart");
         
@@ -178,6 +178,14 @@ public class GameView extends JFrame {
             
             if (model == null) return;
             
+            renderGame(g);
+        }
+        
+        private void renderGame(Graphics g) {
+            // Draw background
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, getWidth(), getHeight());
+            
             // Draw player
             Player player = model.getPlayer();
             g.setColor(Color.GREEN);
@@ -208,20 +216,33 @@ public class GameView extends JFrame {
                 g.fillRect(missile.getX(), missile.getY(), missile.getWidth(), missile.getHeight());
             }
             
-            // Draw score and missile counts
+            // Draw score and debug info
             g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 20));
+            g.drawString("Score: " + model.getScore(), 10, 30);
+            
+            if (model.isDebugMode()) {
+                g.setFont(new Font("Arial", Font.PLAIN, 12));
+                g.drawString("Debug - Left: " + model.getLeftmostX() + " Right: " + model.getRightmostX() + 
+                            " Dir: " + (model.getEnemyDirection() > 0 ? "Right" : "Left"), 10, 50);
+                g.drawString("Player - X: " + model.getPlayer().getX() + " Y: " + model.getPlayer().getY(), 10, 70);
+            }
+            
+            // Draw missile counts
             g.setFont(new Font("Arial", Font.BOLD, 16));
-            g.drawString("Score: " + model.getScore(), 20, 30);
+            int missileY = getHeight() - 20;
+            g.drawString("Basic: " + model.getBasicMissilesLive(), 10, missileY);
+            g.drawString("Double: " + model.getDoubleMissilesLive(), 100, missileY);
+            g.drawString("Targeting: " + model.getTargetingMissilesLive(), 190, missileY);
+            g.drawString("Laser: " + model.getLaserMissilesLive(), 280, missileY);
             
             // Draw game over message if game is over
             if (model.isGameOver()) {
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Arial", Font.BOLD, 32));
-                String message = "Game Over!";
-                FontMetrics metrics = g.getFontMetrics();
-                int x = (WIDTH - metrics.stringWidth(message)) / 2;
-                int y = HEIGHT / 2;
-                g.drawString(message, x, y);
+                g.setColor(Color.RED);
+                g.setFont(new Font("Arial", Font.BOLD, 48));
+                String gameOverText = "GAME OVER";
+                int textWidth = g.getFontMetrics().stringWidth(gameOverText);
+                g.drawString(gameOverText, (getWidth() - textWidth) / 2, getHeight() / 2);
             }
         }
     }
