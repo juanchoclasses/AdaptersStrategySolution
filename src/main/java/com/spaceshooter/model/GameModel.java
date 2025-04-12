@@ -23,10 +23,10 @@ public class GameModel {
     private int rightmostX = 0;
     
     // Live missile limits
-    public static final int BASIC_MISSILE_LIMIT = 4;
-    public static final int DOUBLE_MISSILE_LIMIT = 2;
+    public static final int BASIC_MISSILE_LIMIT = 6;
+    public static final int DOUBLE_MISSILE_LIMIT = 3;
     public static final int TARGETING_MISSILE_LIMIT = 1;
-    public static final int LASER_MISSILE_LIMIT = 1;
+    public static final int LASER_MISSILE_LIMIT = 2;
     
     // Current live missile counts
     private int basicMissilesLive;
@@ -40,6 +40,7 @@ public class GameModel {
     private static final int WIDTH = 600; // Game width
     private static final int ENEMY_MOVE_DOWN_AMOUNT = 50; // Amount to move down when enemies hit the edge
     private int enemyDirection = 1; // Direction of enemy movement
+    private int dropCount = 0; // Track how many times enemies have dropped
     
     public GameModel() {
         this.player = new Player(300, 500);
@@ -114,7 +115,7 @@ public class GameModel {
                     if (missile.collidesWith(enemy)) {
                         missilesToRemove.add(missile);
                         // Calculate damage based on missile type
-                        int damage = 10; // Basic missile damage
+                        int damage = 20; // Basic missile damage
                         if (missileStrategy instanceof LaserMissileAdapter) {
                             damage = 40; // Laser does more damage
                         } else if (missileStrategy instanceof TargetingMissileStrategy) {
@@ -287,11 +288,15 @@ public class GameModel {
                 for (Enemy enemy : enemies) {
                     enemy.moveDown();
                 }
+                dropCount++; // Increment drop count
+                updateEnemySpeeds(); // Update speeds after drop
             } else if (enemyDirection < 0 && leftmostX <= 0) {
                 enemyDirection = 1;
                 for (Enemy enemy : enemies) {
                     enemy.moveDown();
                 }
+                dropCount++; // Increment drop count
+                updateEnemySpeeds(); // Update speeds after drop
             }
             
             // Move all enemies horizontally
@@ -303,5 +308,16 @@ public class GameModel {
                 }
             }
         }
+    }
+    
+    private void updateEnemySpeeds() {
+        int totalEnemies = enemies.size();
+        for (Enemy enemy : enemies) {
+            enemy.updateSpeed(totalEnemies, dropCount);
+        }
+    }
+    
+    public int getDropCount() {
+        return dropCount;
     }
 }
