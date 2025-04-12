@@ -117,6 +117,14 @@ public class GameModel {
         List<Missile> missilesToRemove = new ArrayList<>();
         List<Enemy> enemiesToRemove = new ArrayList<>();
         
+        // Check if any enemy has moved below the player's ship
+        for (Enemy enemy : enemies) {
+            if (enemy.getY() + enemy.getHeight() >= player.getY()) {
+                gameOver = true;
+                return;
+            }
+        }
+        
         for (Missile missile : missiles) {
             if (missile.isPlayerMissile()) {
                 for (Enemy enemy : enemies) {
