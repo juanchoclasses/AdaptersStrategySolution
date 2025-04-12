@@ -19,14 +19,19 @@ public class GameModel {
     private int score;
     private boolean gameOver = false;
     private boolean debugMode = false;
+    private boolean godMode = false;
     private int leftmostX = 0;
     private int rightmostX = 0;
     
     // Live missile limits
-    public static final int BASIC_MISSILE_LIMIT = 6;
-    public static final int DOUBLE_MISSILE_LIMIT = 3;
-    public static final int TARGETING_MISSILE_LIMIT = 1;
-    public static final int LASER_MISSILE_LIMIT = 2;
+    public static final int BASIC_MISSILE_LIMIT = Integer.MAX_VALUE;  // Infinite
+    public static final int DOUBLE_MISSILE_LIMIT = Integer.MAX_VALUE;  // Infinite
+    public static final int TARGETING_MISSILE_LIMIT = 1;  // Changed from 4 to 1
+    public static final int LASER_MISSILE_LIMIT = 2;  // Changed from 30 to 2
+    
+    // Remaining weapon counts
+    private int remainingTargetingMissiles = 2;  // Start with 2 targeting missiles
+    private int remainingLaserMissiles = 30;  // Start with 30 laser missiles
     
     // Current live missile counts
     private int basicMissilesLive;
@@ -43,7 +48,7 @@ public class GameModel {
     private int dropCount = 0; // Track how many times enemies have dropped
     
     public GameModel() {
-        this.player = new Player(300, 500);
+        this.player = new Player(300, 600);
         this.enemies = new ArrayList<>();
         this.missiles = new ArrayList<>();
         this.missileStrategy = new BasicMissileStrategy();
@@ -64,9 +69,9 @@ public class GameModel {
     }
     
     private void initializeEnemies() {
-        for (int row = 0; row < 3; row++) {
+        for (int row = 0; row < 3; row++) {  // Changed back to 3 rows
             for (int col = 0; col < 8; col++) {
-                enemies.add(new Enemy(50 + col * 70, 50 + row * 60));
+                enemies.add(new Enemy(50 + col * 70, 150 + row * 60));
             }
         }
     }
@@ -139,7 +144,10 @@ public class GameModel {
             } else {
                 if (missile.collidesWith(player) && !missile.isPlayerMissile()) {
                     missilesToRemove.add(missile);
-                    gameOver = true;
+                    player.takeDamage(godMode ? 1 : 20); // Enemy missiles do 1 damage in god mode, 20 normally
+                    if (player.isDestroyed()) {
+                        gameOver = true;
+                    }
                 }
             }
         }
@@ -183,9 +191,9 @@ public class GameModel {
         } else if (missileStrategy instanceof DoubleMissileStrategy) {
             return doubleMissilesLive < DOUBLE_MISSILE_LIMIT;
         } else if (missileStrategy instanceof TargetingMissileStrategy) {
-            return targetingMissilesLive < TARGETING_MISSILE_LIMIT;
+            return targetingMissilesLive < TARGETING_MISSILE_LIMIT && remainingTargetingMissiles > 0;
         } else if (missileStrategy instanceof LaserMissileAdapter) {
-            return laserMissilesLive < LASER_MISSILE_LIMIT;
+            return laserMissilesLive < LASER_MISSILE_LIMIT && remainingLaserMissiles > 0;
         }
         return false;
     }
@@ -197,8 +205,10 @@ public class GameModel {
             doubleMissilesLive++;
         } else if (missileStrategy instanceof TargetingMissileStrategy) {
             targetingMissilesLive++;
+            remainingTargetingMissiles--;
         } else if (missileStrategy instanceof LaserMissileAdapter) {
             laserMissilesLive++;
+            remainingLaserMissiles--;
         }
     }
     
@@ -313,11 +323,37 @@ public class GameModel {
     private void updateEnemySpeeds() {
         int totalEnemies = enemies.size();
         for (Enemy enemy : enemies) {
-            enemy.updateSpeed(totalEnemies, dropCount);
+            // Base speed + (1 per drop) + (inverse of enemy count with stronger scaling)
+            int baseSpeed = 5 + dropCount;  // Using 5 as base speed
+            
+            // If we have fewer than 6 enemies, add an aggressive speed boost
+            if (totalEnemies < 6) {
+                baseSpeed += (6 - totalEnemies) * 5; // Changed from 3 to 5
+            }
+            
+            // Add the inverse scaling based on total enemies
+            enemy.updateSpeed(baseSpeed + (int)(20.0 / (totalEnemies + 1)));
         }
     }
     
     public int getDropCount() {
         return dropCount;
+    }
+
+    public void toggleGodMode() {
+        godMode = !godMode;
+    }
+
+    public boolean isGodMode() {
+        return godMode;
+    }
+
+    // Add getters for remaining weapon counts
+    public int getRemainingTargetingMissiles() {
+        return remainingTargetingMissiles;
+    }
+    
+    public int getRemainingLaserMissiles() {
+        return remainingLaserMissiles;
     }
 }

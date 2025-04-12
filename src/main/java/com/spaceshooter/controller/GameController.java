@@ -61,6 +61,12 @@ public class GameController {
                 case KeyEvent.VK_B:
                     model.setMissileStrategy(new LaserMissileAdapter());
                     break;
+                case KeyEvent.VK_G:
+                    model.toggleGodMode();
+                    break;
+                case KeyEvent.VK_ESCAPE:
+                    model.toggleDebugMode();
+                    break;
             }
         }
     }

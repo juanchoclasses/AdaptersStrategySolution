@@ -25,7 +25,7 @@ public class GameView extends JFrame {
     private Timer leftMoveTimer;
     private Timer rightMoveTimer;
     private static final int WIDTH = 600;
-    private static final int HEIGHT = 600;
+    private static final int HEIGHT = 700;
     
     public GameView() {
         setTitle("Space Shooter - Strategy & Adapter Patterns Demo");
@@ -188,8 +188,21 @@ public class GameView extends JFrame {
             
             // Draw player
             Player player = model.getPlayer();
-            g.setColor(Color.GREEN);
+            // Draw health bar
+            g.setColor(Color.RED);
+            int healthBarWidth = (int)((player.getWidth() * player.getHealth()) / 100.0);
+            g.fillRect(player.getX(), player.getY() - 7, healthBarWidth, 5);
+            // Draw ship
+            g.setColor(Color.BLUE);
             g.fillRect(player.getX(), player.getY(), player.getWidth(), player.getHeight());
+            // Draw health text
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 12));
+            String playerHealth = String.valueOf(player.getHealth());
+            FontMetrics playerMetrics = g.getFontMetrics();
+            int playerTextX = player.getX() + (player.getWidth() - playerMetrics.stringWidth(playerHealth)) / 2;
+            int playerTextY = player.getY() + (player.getHeight() + playerMetrics.getHeight()) / 2;
+            g.drawString(playerHealth, playerTextX, playerTextY);
             
             // Draw enemies
             g.setColor(Color.RED);
@@ -220,21 +233,27 @@ public class GameView extends JFrame {
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 20));
             g.drawString("Score: " + model.getScore(), 10, 30);
+            g.drawString("Health: " + model.getPlayer().getHealth(), 10, 60);
+            
+            // Draw weapon info at top right
+            g.setFont(new Font("Arial", Font.BOLD, 16));
+            int weaponX = getWidth() - 200;  // Right side of screen
+            int weaponY = 30;  // Start at top
+            g.drawString("Basic Missiles: " + model.getBasicMissilesLive(), weaponX, weaponY);
+            weaponY += 25;
+            g.drawString("Double Missiles: " + model.getDoubleMissilesLive(), weaponX, weaponY);
+            weaponY += 25;
+            g.drawString("Targeting Missiles: " + model.getTargetingMissilesLive() + "/" + model.getRemainingTargetingMissiles(), weaponX, weaponY);
+            weaponY += 25;
+            g.drawString("Laser Missiles: " + model.getLaserMissilesLive() + "/" + model.getRemainingLaserMissiles(), weaponX, weaponY);
             
             if (model.isDebugMode()) {
                 g.setFont(new Font("Arial", Font.PLAIN, 12));
                 g.drawString("Debug - Left: " + model.getLeftmostX() + " Right: " + model.getRightmostX() + 
-                            " Dir: " + (model.getEnemyDirection() > 0 ? "Right" : "Left"), 10, 50);
-                g.drawString("Player - X: " + model.getPlayer().getX() + " Y: " + model.getPlayer().getY(), 10, 70);
+                            " Dir: " + (model.getEnemyDirection() > 0 ? "Right" : "Left"), 10, 90);
+                g.drawString("Player - X: " + model.getPlayer().getX() + " Y: " + model.getPlayer().getY(), 10, 110);
+                g.drawString("God Mode: " + (model.isGodMode() ? "ON" : "OFF"), 10, 130);
             }
-            
-            // Draw missile counts
-            g.setFont(new Font("Arial", Font.BOLD, 16));
-            int missileY = getHeight() - 20;
-            g.drawString("Basic: " + model.getBasicMissilesLive(), 10, missileY);
-            g.drawString("Double: " + model.getDoubleMissilesLive(), 100, missileY);
-            g.drawString("Targeting: " + model.getTargetingMissilesLive(), 190, missileY);
-            g.drawString("Laser: " + model.getLaserMissilesLive(), 280, missileY);
             
             // Draw game over message if game is over
             if (model.isGameOver()) {

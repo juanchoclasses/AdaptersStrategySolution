@@ -29,10 +29,8 @@ public class Enemy {
         y += currentSpeed;
     }
     
-    public void updateSpeed(int totalEnemies, int dropCount) {
-        // Speed increases with fewer enemies and more drops
-        // Base speed + (1 per drop) + (inverse of enemy count with stronger scaling)
-        currentSpeed = BASE_SPEED + dropCount + (int)(20.0 / (totalEnemies + 1));
+    public void updateSpeed(int speed) {
+        currentSpeed = speed;
     }
     
     public void takeDamage(int damage) {
