@@ -7,11 +7,32 @@ public class Enemy {
     private static final int WIDTH = 30;
     private static final int HEIGHT = 30;
     private static final int INITIAL_HEALTH = 100;
+    private static final int BASE_SPEED = 5;
+    private int currentSpeed;
     
     public Enemy(int x, int y) {
         this.x = x;
         this.y = y;
         this.health = INITIAL_HEALTH;
+        this.currentSpeed = BASE_SPEED;
+    }
+    
+    public void moveLeft() {
+        x -= currentSpeed;
+    }
+    
+    public void moveRight() {
+        x += currentSpeed;
+    }
+    
+    public void moveDown() {
+        y += currentSpeed;
+    }
+    
+    public void updateSpeed(int totalEnemies, int dropCount) {
+        // Speed increases with fewer enemies and more drops
+        // Base speed + (1 per drop) + (inverse of enemy count with stronger scaling)
+        currentSpeed = BASE_SPEED + dropCount + (int)(20.0 / (totalEnemies + 1));
     }
     
     public void takeDamage(int damage) {
@@ -40,5 +61,13 @@ public class Enemy {
     
     public int getHeight() {
         return HEIGHT;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 }
