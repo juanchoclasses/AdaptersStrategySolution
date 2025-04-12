@@ -8,51 +8,26 @@ import com.spaceshooter.strategy.MissileStrategy;
  * Adapter that allows the LaserWeapon to be used as a MissileStrategy.
  * This demonstrates the Adapter pattern by converting the LaserWeapon interface
  * to match the MissileStrategy interface.
+ * 
+ * TODO: Implement this adapter to convert the LaserWeapon into a MissileStrategy.
+ * The laser weapon has the following unique properties:
+ * 1. Creates a laser beam that moves upward
+ * 2. Has fixed width and height
+ * 3. Can check for collisions with enemies
  */
 public class LaserMissileAdapter implements MissileStrategy {
-    private LaserWeapon laserWeapon;
-    private LaserBeam currentBeam;
+    // TODO: Add necessary fields
     
-    public LaserMissileAdapter() {
-        this.laserWeapon = new LaserWeapon();
-    }
+    // TODO: Implement constructor
     
     @Override
     public Missile createMissile(int x, int y) {
-        // Use the LaserWeapon to create a LaserBeam
-        currentBeam = laserWeapon.fireLaser(x, y);
-        
-        // Create an adapter missile that will delegate to the laser beam
-        return new Missile(x, y, true) {
-            @Override
-            public void update() {
-                if (currentBeam != null) {
-                    currentBeam.move();
-                    x = currentBeam.getSourceX();
-                    y = currentBeam.getSourceY();
-                }
-            }
-            
-            @Override
-            public int getWidth() {
-                return currentBeam != null ? currentBeam.getWidth() : super.getWidth();
-            }
-            
-            @Override
-            public int getHeight() {
-                return currentBeam != null ? currentBeam.getHeight() : super.getHeight();
-            }
-            
-            @Override
-            public boolean collidesWith(Enemy enemy) {
-                return currentBeam != null && 
-                       currentBeam.intersectsWith(enemy.getX(), enemy.getY(), 
-                                                enemy.getWidth(), enemy.getHeight());
-            }
-        };
-    }
-    
-    public LaserBeam getCurrentBeam() {
-        return currentBeam;
+        // TODO: Implement this method to:
+        // 1. Create a new LaserBeam using the weapon
+        // 2. Return an anonymous Missile class that:
+        //    - Updates position based on beam movement
+        //    - Uses beam dimensions for size
+        //    - Handles collisions using beam's intersection check
+        return null;
     }
 }
