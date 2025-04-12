@@ -253,6 +253,13 @@ public class GameView extends JFrame {
                             " Dir: " + (model.getEnemyDirection() > 0 ? "Right" : "Left"), 10, 90);
                 g.drawString("Player - X: " + model.getPlayer().getX() + " Y: " + model.getPlayer().getY(), 10, 110);
                 g.drawString("God Mode: " + (model.isGodMode() ? "ON" : "OFF"), 10, 130);
+                
+                // Add enemy speed info to debug HUD
+                if (!model.getEnemies().isEmpty()) {
+                    Enemy firstEnemy = model.getEnemies().get(0);
+                    g.drawString("Enemy Speed: " + firstEnemy.getCurrentSpeed(), 10, 150);
+                    g.drawString("Total Enemies: " + model.getEnemies().size(), 10, 170);
+                }
             }
             
             // Draw game over message if game is over

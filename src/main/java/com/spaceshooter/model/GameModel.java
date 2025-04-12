@@ -69,9 +69,9 @@ public class GameModel {
     }
     
     private void initializeEnemies() {
-        for (int row = 0; row < 3; row++) {  // Changed back to 3 rows
+        for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 8; col++) {
-                enemies.add(new Enemy(50 + col * 70, 150 + row * 60));
+                enemies.add(new Enemy(50 + col * 70, 150 + row * 60, WIDTH));
             }
         }
     }
@@ -92,6 +92,9 @@ public class GameModel {
         
         // Check for collisions
         checkCollisions();
+        
+        // Update enemy speeds every frame
+        updateEnemySpeeds();
         
         // Move enemies
         updateEnemies();
@@ -119,22 +122,28 @@ public class GameModel {
                 for (Enemy enemy : enemies) {
                     if (missile.collidesWith(enemy)) {
                         missilesToRemove.add(missile);
-                        // Calculate damage based on missile type
-                        int damage = 20; // Basic missile damage
-                        if (missileStrategy instanceof LaserMissileAdapter) {
-                            damage = 40; // Laser does more damage
-                        } else if (missileStrategy instanceof TargetingMissileStrategy) {
-                            damage = 75; // Targeting missile does the most damage
-                        }
-                        enemy.takeDamage(damage);
-                        
-                        if (enemy.isDestroyed()) {
+                        // In god mode, missiles instantly kill aliens
+                        if (godMode) {
                             enemiesToRemove.add(enemy);
-                            // Add more score for laser hits
+                            score += 100;
+                        } else {
+                            // Calculate damage based on missile type
+                            int damage = 20; // Basic missile damage
                             if (missileStrategy instanceof LaserMissileAdapter) {
-                                score += 200; // Double points for laser hits
-                            } else {
-                                score += 100;
+                                damage = 40; // Laser does more damage
+                            } else if (missileStrategy instanceof TargetingMissileStrategy) {
+                                damage = 75; // Targeting missile does the most damage
+                            }
+                            enemy.takeDamage(damage);
+                            
+                            if (enemy.isDestroyed()) {
+                                enemiesToRemove.add(enemy);
+                                // Add more score for laser hits
+                                if (missileStrategy instanceof LaserMissileAdapter) {
+                                    score += 200; // Double points for laser hits
+                                } else {
+                                    score += 100;
+                                }
                             }
                         }
                         decrementLiveMissileCount(missile);
@@ -323,16 +332,7 @@ public class GameModel {
     private void updateEnemySpeeds() {
         int totalEnemies = enemies.size();
         for (Enemy enemy : enemies) {
-            // Base speed + (1 per drop) + (inverse of enemy count with stronger scaling)
-            int baseSpeed = 5 + dropCount;  // Using 5 as base speed
-            
-            // If we have fewer than 6 enemies, add an aggressive speed boost
-            if (totalEnemies < 6) {
-                baseSpeed += (6 - totalEnemies) * 5; // Changed from 3 to 5
-            }
-            
-            // Add the inverse scaling based on total enemies
-            enemy.updateSpeed(baseSpeed + (int)(20.0 / (totalEnemies + 1)));
+            enemy.updateSpeed(totalEnemies, dropCount);
         }
     }
     
