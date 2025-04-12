@@ -120,17 +120,40 @@ The missile position updates are handled through several layers of the game syst
 4. **Laser Missile Updates**:
    - In `LaserMissileAdapter.java`, the update is handled through an anonymous class:
    ```java
-   return new Missile(x, y, true) {
+   return new Missile(initialX, initialY, true) {  // true means it's a player missile
        @Override
        public void update() {
            if (currentBeam != null) {
-               currentBeam.move();
-               x = currentBeam.getSourceX();
-               y = currentBeam.getSourceY();
+               currentBeam.move();  // Move the beam
+               this.x = currentBeam.getSourceX();  // Update missile position
+               this.y = currentBeam.getSourceY();
            }
+       }
+       
+       @Override
+       public int getWidth() {
+           return currentBeam != null ? currentBeam.getWidth() : super.getWidth();
+       }
+       
+       @Override
+       public int getHeight() {
+           return currentBeam != null ? currentBeam.getHeight() : super.getHeight();
+       }
+       
+       @Override
+       public boolean collidesWith(Enemy enemy) {
+           return currentBeam != null && 
+                  currentBeam.intersectsWith(enemy.getX(), enemy.getY(), 
+                                           enemy.getWidth(), enemy.getHeight());
        }
    };
    ```
+
+   This anonymous class:
+   1. Extends the base `Missile` class with initial position (initialX, initialY)
+   2. Overrides `update()` to move with the beam, updating `this.x` and `this.y`
+   3. Overrides `getWidth()` and `getHeight()` to match the beam
+   4. Overrides `collidesWith()` to use the beam's collision detection
 
 The update process happens every game tick (every 20ms as defined in `GameController` with `DELAY = 20`). After updating positions, the game checks for collisions and removes missiles that go off-screen.
 
@@ -178,3 +201,100 @@ The update process happens every game tick (every 20ms as defined in `GameContro
    - How the `DoubleMissileStrategy` creates two missiles
    - How the `TargetingMissileStrategy` tracks and follows enemies
    - The relationship between the `Missile` base class and `TargetingMissile` subclass 
+
+## Exercise 2: Implementing the LaserMissileAdapter
+
+The LaserMissileAdapter demonstrates the Adapter pattern by converting the LaserWeapon interface to match the MissileStrategy interface. This exercise will guide you through implementing the adapter step by step.
+
+### Understanding the Components
+
+1. **LaserWeapon** (Adaptee):
+   - A third-party weapon system
+   - Has a `fireLaser(x, y)` method
+   - Returns a `LaserBeam` object
+
+2. **MissileStrategy** (Target Interface):
+   - Defines the interface our game expects
+   - Has a `createMissile(x, y)` method
+   - Returns a `Missile` object
+
+3. **LaserBeam**:
+   - Represents a laser projectile
+   - Moves upward at constant speed
+   - Has fixed width and height
+   - Can check for collisions
+
+### Step-by-Step Implementation
+
+1. **Add Fields to LaserMissileAdapter**:
+   ```java
+   private LaserWeapon laserWeapon;
+   private LaserBeam currentBeam;
+   ```
+
+2. **Implement the Constructor**:
+   ```java
+   public LaserMissileAdapter() {
+       this.laserWeapon = new LaserWeapon();
+   }
+   ```
+
+3. **Implement createMissile()**:
+   - Create a new LaserBeam using the weapon
+   - Return an anonymous Missile class that:
+     - Updates position based on beam movement
+     - Uses beam dimensions for size
+     - Handles collisions using beam's intersection check
+
+   Here's how to create the anonymous Missile class:
+   ```java
+   return new Missile(initialX, initialY, true) {  // true means it's a player missile
+       @Override
+       public void update() {
+           if (currentBeam != null) {
+               currentBeam.move();  // Move the beam
+               this.x = currentBeam.getSourceX();  // Update missile position
+               this.y = currentBeam.getSourceY();
+           }
+       }
+       
+       @Override
+       public int getWidth() {
+           return currentBeam != null ? currentBeam.getWidth() : super.getWidth();
+       }
+       
+       @Override
+       public int getHeight() {
+           return currentBeam != null ? currentBeam.getHeight() : super.getHeight();
+       }
+       
+       @Override
+       public boolean collidesWith(Enemy enemy) {
+           return currentBeam != null && 
+                  currentBeam.intersectsWith(enemy.getX(), enemy.getY(), 
+                                           enemy.getWidth(), enemy.getHeight());
+       }
+   };
+   ```
+
+   This anonymous class:
+   1. Extends the base `Missile` class with initial position (initialX, initialY)
+   2. Overrides `update()` to move with the beam, updating `this.x` and `this.y`
+   3. Overrides `getWidth()` and `getHeight()` to match the beam
+   4. Overrides `collidesWith()` to use the beam's collision detection
+
+### Files to Study
+- `src/main/java/com/spaceshooter/adapter/LaserBeam.java`
+- `src/main/java/com/spaceshooter/adapter/LaserWeapon.java`
+- `src/main/java/com/spaceshooter/adapter/LaserMissileAdapter.java`
+
+### Hints
+1. Look at how the `LaserBeam` moves and handles collisions
+2. The anonymous `Missile` class needs to delegate to the `LaserBeam`
+3. Remember to update the missile's position when the beam moves
+
+### Expected Behavior
+- Pressing B should fire a laser beam
+- The beam should move upward at constant speed
+- The beam should damage enemies it hits
+- The beam should be removed when it goes off-screen 
