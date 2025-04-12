@@ -1,79 +1,49 @@
-# Space Shooter Game - Design Patterns Demonstration
+# Space Shooter - Strategy & Adapter Patterns Exercise
 
-This project demonstrates the use of two important design patterns in a fun Space Shooter game:
+## Exercise Overview
+This exercise focuses on implementing and understanding the Strategy and Adapter design patterns in a Space Shooter game. The game currently has four different types of missiles (Basic, Double, Targeting, and Laser) that demonstrate these patterns.
 
-1. **Strategy Pattern** - For different missile behaviors
-2. **Adapter Pattern** - For integrating a different weapon system
+## Current Implementation
+- **Basic Missile**: Simple straight-flying missile
+- **Double Missile**: Fires two missiles side by side
+- **Targeting Missile**: Tracks and follows the nearest enemy
+- **Laser Missile**: Uses the Adapter pattern to adapt a third-party laser system
 
-## Project Structure
+## Exercise Tasks
 
-```
-com.spaceshooter
-├── game
-│   └── SpaceShooterGame.java (Main class)
-├── model
-│   ├── Enemy.java
-│   ├── GameModel.java
-│   ├── Missile.java
-│   └── Player.java
-├── view
-│   └── GameView.java
-├── controller
-│   └── GameController.java
-├── strategy
-│   ├── MissileStrategy.java (Interface)
-│   ├── BasicMissileStrategy.java
-│   ├── DoubleMissileStrategy.java
-│   └── TargetingMissileStrategy.java
-└── adapter
-    ├── LaserWeapon.java (3rd-party/legacy system)
-    └── LaserMissileAdapter.java (Adapter)
-```
+### Task 1: Implement a New Missile Strategy
+Create a new missile strategy called `SpreadMissileStrategy` that:
+1. Fires three missiles in a spread pattern (center, left, and right)
+2. The side missiles should angle outward slightly
+3. Implement the `MissileStrategy` interface
+4. Add a new button to the UI to select this strategy
 
-## Design Patterns Implementation
+### Task 2: Create a New Adapter
+Create a new adapter called `PlasmaMissileAdapter` that:
+1. Adapts a third-party plasma weapon system
+2. The plasma weapon should have different behavior from existing weapons
+3. Implement the adapter pattern to make it work with our missile system
+4. Add a new button to the UI to select this weapon
 
-### Strategy Pattern
+### Task 3: Code Review
+1. Identify where the Strategy pattern is used in the code
+2. Explain how the Adapter pattern is implemented
+3. Discuss the benefits of using these patterns in this context
 
-The Strategy pattern defines a family of algorithms, encapsulates each one, and makes them interchangeable. In this game, different missile behaviors are implemented as strategies:
+## Hints
+- Look at the existing `MissileStrategy` implementations for guidance
+- Study how the `LaserMissileAdapter` works with the third-party laser system
+- The UI controls are in `GameView` and the strategy selection is in `GameController`
 
-- `MissileStrategy` - Interface for all missile strategies
-- `BasicMissileStrategy` - Fires a single missile
-- `DoubleMissileStrategy` - Fires two missiles at once
-- `TargetingMissileStrategy` - Fires a missile that targets enemies
+## Getting Started
+1. Clone this repository
+2. Study the existing code structure
+3. Implement the new strategies and adapter
+4. Test your implementation
 
-### Adapter Pattern
-
-The Adapter pattern converts the interface of a class into another interface clients expect. In this game, a `LaserWeapon` class represents a different weapon system (perhaps from a third-party library or legacy code) that doesn't match our missile strategy interface:
-
-- `LaserWeapon` - A different weapon system with its own interface
-- `LaserMissileAdapter` - Adapts the LaserWeapon to work with our MissileStrategy interface
-
-## Game Controls
-
-- **Left/Right Arrow Keys**: Move the player ship
-- **Space**: Fire a missile
-- **Strategy Buttons**: Change missile strategy
-  - Basic: Fire a single missile
-  - Double: Fire two missiles at once
-  - Targeting: Fire a missile that targets enemies
-  - Laser: Use the adapted laser weapon
-
-## Learning Outcomes
-
-This project helps students understand:
-
-1. How to implement the Strategy pattern to encapsulate different behaviors
-2. How to use the Adapter pattern to make incompatible interfaces work together
-3. Game development concepts in Java with Swing
-4. Object-oriented design principles
-
-## Running the Game
-
-To run the game, compile and run the `SpaceShooterGame` class:
-
-```
-javac com/spaceshooter/game/SpaceShooterGame.java
-java com.spaceshooter.game.SpaceShooterGame
-```
-
-Or import the project into your favorite IDE and run it from there.
+## Submission
+Submit your completed exercise with:
+1. The new `SpreadMissileStrategy` implementation
+2. The new `PlasmaMissileAdapter` implementation
+3. Updated UI code
+4. A brief explanation of your implementation choices
