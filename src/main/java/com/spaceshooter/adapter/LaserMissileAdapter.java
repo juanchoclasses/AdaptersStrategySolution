@@ -16,58 +16,59 @@ import com.spaceshooter.strategy.MissileStrategy;
  * 3. Can check for collisions with enemies
  */
 public class LaserMissileAdapter implements MissileStrategy {
-    private final LaserWeapon laserWeapon;
+  private final LaserWeapon laserWeapon;
 
-    /**
-     * Constructs a new LaserMissileAdapter with the specified laser weapon.
-     *
-     * @param laserWeapon the laser weapon to adapt
-     */
-    public LaserMissileAdapter() {
-        this.laserWeapon = new LaserWeapon();
-    }
+  /**
+   * Constructs a new LaserMissileAdapter with the specified laser weapon.
+   *
+   * @param laserWeapon the laser weapon to adapt
+   */
+  public LaserMissileAdapter() {
+    this.laserWeapon = new LaserWeapon();
+  }
 
-    /**
-     * Creates a new missile that wraps a laser beam.
-     * The missile will:
-     * - Update position based on beam movement
-     * - Use beam dimensions for size
-     * - Handle collisions using beam's intersection check
-     *
-     * @param x the x-coordinate where the missile should be created
-     * @param y the y-coordinate where the missile should be created
-     * @return a new missile that wraps a laser beam
-     */
-    @Override
-    public Missile createMissile(int x, int y) {
-        LaserBeam beam = laserWeapon.fireLaser(x, y);
-        return new Missile(x, y, true) {
-            @Override
-            public void update() {
-                beam.move();
-                this.x = beam.getSourceX();
-                this.y = beam.getSourceY();
-            }
+  /**
+   * Creates a new missile that wraps a laser beam.
+   * The missile will:
+   * - Update position based on beam movement
+   * - Use beam dimensions for size
+   * - Handle collisions using beam's intersection check
+   *
+   * @param initialX the x-coordinate where the missile should be created
+   * @param initialY the y-coordinate where the missile should be created
+   * @return a new missile that wraps a laser beam
+   */
+  @Override
+  public Missile createMissile(int initialX, int initialY) {
+    LaserBeam beam = laserWeapon.fireLaser(initialX, initialY);
+    return new Missile(initialX, initialY, true) {
+      @Override
+      public void update() {
+        beam.move();
+        this.x = beam.getSourceX();
+        this.y = beam.getSourceY();
+      }
 
-            @Override
-            public boolean collidesWith(Enemy enemy) {
-                return beam.intersectsWith(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
-            }
+      @Override
+      public boolean collidesWith(Player player) {
+        return beam.intersectsWith(player.getX(), player.getY(), player.getWidth(),
+            player.getHeight());
+      }
 
-            @Override
-            public boolean collidesWith(Player player) {
-                return beam.intersectsWith(player.getX(), player.getY(), player.getWidth(), player.getHeight());
-            }
+      @Override
+      public boolean collidesWith(Enemy enemy) {
+        return beam.intersectsWith(enemy.getX(), enemy.getY(), enemy.getWidth(), enemy.getHeight());
+      }
 
-            @Override
-            public int getWidth() {
-                return beam.getWidth();
-            }
+      @Override
+      public int getWidth() {
+        return beam.getWidth();
+      }
 
-            @Override
-            public int getHeight() {
-                return beam.getHeight();
-            }
-        };
-    }
+      @Override
+      public int getHeight() {
+        return beam.getHeight();
+      }
+    };
+  }
 }
