@@ -35,7 +35,7 @@ public class GameController {
    * Initializes the game timer and sets up input listeners.
    *
    * @param model the game model to control
-   * @param view the game view to update
+   * @param view  the game view to update
    */
   public GameController(GameModel model, GameView view) {
     this.model = model;
@@ -99,7 +99,7 @@ public class GameController {
           model.setMissileStrategy(new TargetingMissileStrategy(model.getEnemies()));
           break;
         case KeyEvent.VK_B:
-          model.setMissileStrategy(new LaserMissileAdapter(new LaserWeapon()));
+          model.setMissileStrategy(new LaserMissileAdapter());
           break;
         case KeyEvent.VK_G:
           model.toggleGodMode();
@@ -152,7 +152,7 @@ public class GameController {
           model.setMissileStrategy(new TargetingMissileStrategy(model.getEnemies()));
           break;
         case "laser":
-          model.setMissileStrategy(new LaserMissileAdapter(new LaserWeapon()));
+          model.setMissileStrategy(new LaserMissileAdapter());
           break;
         case "restart":
           restartGame();

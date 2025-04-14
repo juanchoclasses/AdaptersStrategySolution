@@ -23,8 +23,8 @@ public class LaserMissileAdapter implements MissileStrategy {
      *
      * @param laserWeapon the laser weapon to adapt
      */
-    public LaserMissileAdapter(LaserWeapon laserWeapon) {
-        this.laserWeapon = laserWeapon;
+    public LaserMissileAdapter() {
+        this.laserWeapon = new LaserWeapon();
     }
 
     /**
