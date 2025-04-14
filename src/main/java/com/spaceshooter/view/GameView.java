@@ -11,6 +11,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * The main view component of the Space Shooter game.
+ * This class extends JFrame and provides the graphical user interface for the game,
+ * including the game panel, control buttons, and movement controls.
+ * It handles the display of game elements and user interaction.
+ */
 public class GameView extends JFrame {
   private static final int WIDTH = 600;
   private static final int HEIGHT = 700;
@@ -27,6 +33,11 @@ public class GameView extends JFrame {
   private Timer leftMoveTimer;
   private Timer rightMoveTimer;
 
+  /**
+   * Constructs a new GameView with the game panel and control panels.
+   * Initializes the window with the appropriate title, size, and layout.
+   * Sets up the game panel, control panel, and movement panel.
+   */
   public GameView() {
     setTitle("Space Shooter - Strategy & Adapter Patterns Demo");
     setSize(WIDTH, HEIGHT + 150);
@@ -140,6 +151,11 @@ public class GameView extends JFrame {
     });
   }
 
+  /**
+   * Sets the action listeners for all strategy selection buttons.
+   *
+   * @param listener the action listener to be added to all strategy buttons
+   */
   public void setStrategyButtonListeners(ActionListener listener) {
     basicButton.addActionListener(listener);
     doubleButton.addActionListener(listener);
@@ -148,30 +164,59 @@ public class GameView extends JFrame {
     restartButton.addActionListener(listener);
   }
 
+  /**
+   * Sets the game model for this view and its game panel.
+   *
+   * @param model the game model to be displayed
+   */
   public void setModel(GameModel model) {
     this.model = model;
     gamePanel.setModel(model);
   }
 
+  /**
+   * Displays the game over dialog with the final score.
+   *
+   * @param score the final score to display
+   */
   public void showGameOver(int score) {
     JOptionPane.showMessageDialog(this,
-        "Game Over! Your score: " + score,
+        "Game Over!\nYour score: " + score,
         "Game Over",
         JOptionPane.INFORMATION_MESSAGE);
   }
 
+  /**
+   * The game panel that renders the game elements.
+   * This inner class extends JPanel and handles the visual representation
+   * of the game state, including the player, enemies, and missiles.
+   */
   private class GamePanel extends JPanel {
     private GameModel model;
 
+    /**
+     * Constructs a new game panel with a black background.
+     */
     public GamePanel() {
       setPreferredSize(new Dimension(WIDTH, HEIGHT));
       setBackground(Color.BLACK);
     }
 
+    /**
+     * Sets the game model for this panel.
+     *
+     * @param model the game model to be displayed
+     */
     public void setModel(GameModel model) {
       this.model = model;
     }
 
+    /**
+     * Paints the game elements on this panel.
+     * Clears the panel and renders all game elements if a model is set.
+     *
+     * @param g the Graphics object to paint with
+     */
     @Override
     protected void paintComponent(Graphics g) {
       super.paintComponent(g);
@@ -183,6 +228,11 @@ public class GameView extends JFrame {
       renderGame(g);
     }
 
+    /**
+     * Renders all game elements including the player, enemies, and missiles.
+     *
+     * @param g the Graphics object to render with
+     */
     private void renderGame(Graphics g) {
       // Draw background
       g.setColor(Color.BLACK);
