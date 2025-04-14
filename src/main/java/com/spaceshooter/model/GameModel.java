@@ -10,6 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * The main game model that manages the state and logic of the Space Shooter game.
+ * This class handles:
+ * - Player and enemy management
+ * - Missile creation and tracking
+ * - Collision detection
+ * - Score tracking
+ * - Game state (game over, debug mode, god mode)
+ * - Weapon strategy management
+ */
 public class GameModel {
   // Live missile limits
   public static final int BASIC_MISSILE_LIMIT = Integer.MAX_VALUE;  // Infinite
@@ -40,10 +50,14 @@ public class GameModel {
   private int laserMissilesLive;
   private boolean movingRight = true;
   private int moveCounter = 0;
-      // Amount to move down when enemies hit the edge
+  // Amount to move down when enemies hit the edge
   private int enemyDirection = 1; // Direction of enemy movement
   private int dropCount = 0; // Track how many times enemies have dropped
 
+  /**
+   * Constructs a new GameModel with initial game state.
+   * Initializes the player, enemies, missiles, and sets up the default missile strategy.
+   */
   public GameModel() {
     this.player = new Player(300, 600);
     this.enemies = new ArrayList<>();
@@ -73,6 +87,13 @@ public class GameModel {
     }
   }
 
+  /**
+   * Updates the game state.
+   * This includes:
+   * - Updating missile positions and removing off-screen missiles
+   * - Checking for collisions
+   * - Updating enemy speeds and positions
+   */
   public void update() {
     if (gameOver) {
       return;
@@ -238,6 +259,10 @@ public class GameModel {
     }
   }
 
+  /**
+   * Fires a missile from the player's current position if allowed.
+   * The type of missile fired depends on the current missile strategy.
+   */
   public void fireMissile() {
     if (!gameOver) {
       if (canFireMissile()) {
@@ -277,90 +302,189 @@ public class GameModel {
     }
   }
 
+  /**
+   * Adds a missile to the game.
+   *
+   * @param missile the missile to add
+   */
   public void addMissile(Missile missile) {
     if (!gameOver) {
       missiles.add(missile);
     }
   }
 
+  /**
+   * Sets the current missile strategy.
+   *
+   * @param strategy the new missile strategy to use
+   */
   public void setMissileStrategy(MissileStrategy strategy) {
     this.missileStrategy = strategy;
   }
 
+  /**
+   * Returns the player object.
+   *
+   * @return the player
+   */
   public Player getPlayer() {
     return player;
   }
 
+  /**
+   * Returns the list of enemies.
+   *
+   * @return the list of enemies
+   */
   public List<Enemy> getEnemies() {
     return enemies;
   }
 
+  /**
+   * Returns the list of active missiles.
+   *
+   * @return the list of missiles
+   */
   public List<Missile> getMissiles() {
     return missiles;
   }
 
+  /**
+   * Returns the current game score.
+   *
+   * @return the score
+   */
   public int getScore() {
     return score;
   }
 
+  /**
+   * Checks if the game is over.
+   *
+   * @return true if the game is over, false otherwise
+   */
   public boolean isGameOver() {
     return gameOver;
   }
 
-  // Add getters for live missile counts
+  /**
+   * Returns the number of live basic missiles.
+   *
+   * @return the number of live basic missiles
+   */
   public int getBasicMissilesLive() {
     return basicMissilesLive;
   }
 
+  /**
+   * Returns the number of live double missiles.
+   *
+   * @return the number of live double missiles
+   */
   public int getDoubleMissilesLive() {
     return doubleMissilesLive;
   }
 
+  /**
+   * Returns the number of live targeting missiles.
+   *
+   * @return the number of live targeting missiles
+   */
   public int getTargetingMissilesLive() {
     return targetingMissilesLive;
   }
 
+  /**
+   * Returns the number of live laser missiles.
+   *
+   * @return the number of live laser missiles
+   */
   public int getLaserMissilesLive() {
     return laserMissilesLive;
   }
 
+  /**
+   * Toggles the debug mode state.
+   */
   public void toggleDebugMode() {
     debugMode = !debugMode;
   }
 
+  /**
+   * Checks if debug mode is enabled.
+   *
+   * @return true if debug mode is enabled, false otherwise
+   */
   public boolean isDebugMode() {
     return debugMode;
   }
 
+  /**
+   * Returns the x-coordinate of the leftmost enemy.
+   *
+   * @return the leftmost x-coordinate
+   */
   public int getLeftmostX() {
     return leftmostX;
   }
 
+  /**
+   * Returns the x-coordinate of the rightmost enemy.
+   *
+   * @return the rightmost x-coordinate
+   */
   public int getRightmostX() {
     return rightmostX;
   }
 
+  /**
+   * Returns the current direction of enemy movement.
+   *
+   * @return 1 for right, -1 for left
+   */
   public int getEnemyDirection() {
     return enemyDirection;
   }
 
+  /**
+   * Returns the number of times enemies have moved down.
+   *
+   * @return the drop count
+   */
   public int getDropCount() {
     return dropCount;
   }
 
+  /**
+   * Toggles the god mode state.
+   */
   public void toggleGodMode() {
     godMode = !godMode;
   }
 
+  /**
+   * Checks if god mode is enabled.
+   *
+   * @return true if god mode is enabled, false otherwise
+   */
   public boolean isGodMode() {
     return godMode;
   }
 
-  // Add getters for remaining weapon counts
+  /**
+   * Returns the number of remaining targeting missiles.
+   *
+   * @return the number of remaining targeting missiles
+   */
   public int getRemainingTargetingMissiles() {
     return remainingTargetingMissiles;
   }
 
+  /**
+   * Returns the number of remaining laser missiles.
+   *
+   * @return the number of remaining laser missiles
+   */
   public int getRemainingLaserMissiles() {
     return remainingLaserMissiles;
   }
